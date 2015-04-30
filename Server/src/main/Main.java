@@ -77,9 +77,9 @@ public class Main {
      
      static File compress(File f) {
          
-         File fcom = new File("C:\\Users\\KHANH\\Desktop\\output_tempcom.txt");
+         File fcom = new File("C:\\output_tempcom.txt");
          
-         File temp = new File("C:\\Users\\KHANH\\Desktop\\output_temp.txt");
+         File temp = new File("C:\\output_temp.txt");
         
         HashMap<Character, Integer> map = countSymbolsFile(f);
         ArrayList<Item> tab = new ArrayList<Item>();
