@@ -29,9 +29,7 @@ public class Server {
     OutputStream os = null;
     InputStream is = null;
     
-    public static int LOG_IN = 1;
-    public static int SIGN_UP = 2;
-    public static int COMPRESS = 3;
+    
     
     OnReceiveListener listener = null;
     
@@ -83,7 +81,13 @@ public class Server {
                                 
                                 
                             case 2: // SIGN_UP
+                                String s3 = dis.readUTF();
+                                String s4 = dis.readUTF();
+                                String[] ss = {s3, s4};
+                                if(listener != null)
+                                    listener.onReceive(i, ss);
                                 break;
+                              
                             case 3: // COMPRESS
                                 ois = new ObjectInputStream(is);
                                 File f = (File) ois.readObject();

@@ -5,15 +5,24 @@
  */
 package main;
 
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Algorithm;
@@ -27,13 +36,18 @@ import model.Server;
  * @author KHANH
  */
 public class Main {
+    
+    public static int LOG_IN = 1;
+    public static int SIGN_UP = 2;
+    public static int COMPRESS = 3;
+    
     static HashMap<String, String> listUserPass = new HashMap<>();
    
      public static void main(String[] args) {
          
-//        read(listUserPass);
+        readFileUserpass(listUserPass);
          
-        Server s = new Server(4000);
+        Server s = new Server(3000);
         
         
         
@@ -47,16 +61,30 @@ public class Main {
                 switch(i) {
                     case 1: // LOGIN
                         String[] userPass = (String[]) o;
-                        s.send(1);
-                        s.send(authenticate(userPass[0], userPass[1], listUserPass));
+                        s.send(LOG_IN);
+                        readFileUserpass(listUserPass);
+                        boolean b = authenticate(userPass[0], userPass[1], listUserPass);
+                        s.send(b);
                         
                         break;
                     case 2: // SIGNUP
+                        String[] userPassWrite = (String[]) o;
+                        // signup failure
+                        readFileUserpass(listUserPass);
+                        if( isUserExist(userPassWrite[0], listUserPass) ) {
+                            s.send(SIGN_UP);
+                            s.send(false);
+                            
+                        } else {
+                            s.send(SIGN_UP);
+                            s.send(true);
+                            writeFileUserpass(userPassWrite);
+                        }
                         break;
                     case 3: // COMPRESS
                         File f = (File) o;
                         File fcom = compress(f);
-                        s.send(Server.COMPRESS);
+                        s.send(COMPRESS);
                         s.send(fcom);
                         System.out.println("Server has sent compressed file to client.");
                         break;
@@ -116,18 +144,55 @@ public class Main {
      }
      
      static boolean authenticate(String user, String pass, HashMap<String, String> map) {
-         // TODO: unimplemented
-         return true;
+      
+         for(HashMap.Entry<String, String> it: map.entrySet()) {
+             if( user.equals(it.getKey()) && pass.equals(it.getValue()) )
+                 return true;
+         }
+         return false;
+     }
+     
+     static boolean isUserExist(String user, HashMap<String, String> map) {
+         for(HashMap.Entry<String, String> it: map.entrySet()) {
+             if( user.equals(it.getKey()) )
+                 return true;
+         }
+         return false;
      }
      
      static void readFileUserpass(HashMap<String, String> map) {
-         // TODO: unimplemented
+         Path path = Paths.get("data\\userpass.txt");
         try {
-            DataInputStream dis = new DataInputStream(new FileInputStream("userpass.txt"));
+            List<String> list = Files.readAllLines(path, StandardCharsets.US_ASCII);
+            for(String s: list) {
+                StringTokenizer st = new StringTokenizer(s, " ");
+                map.put(st.nextToken(), st.nextToken());
+            }
             
-        } catch (FileNotFoundException ex) {
+            for(HashMap.Entry<String, String> it: map.entrySet()) {
+                System.out.println(it.getKey() + it.getValue());
+            }
+        } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+         
+     }
+     
+     static void writeFileUserpass(String[] userPass) {
+//        try {
+//            List<String> list = new ArrayList<>();
+//            list.add(userPass[0] + " " + userPass[1]);
+//            Path path = Paths.get("data\\userpass.txt");
+//            Files.write(path, list, StandardCharsets.US_ASCII);
+//        } catch (IOException ex) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("data\\userpass.txt", true)))) {
+            out.println(userPass[0] + " " + userPass[1]);
+        }catch (IOException e) {
+        //exception handling left as an exercise for the reader
+        }
+        
      }
      
      static int getSize(File f) {

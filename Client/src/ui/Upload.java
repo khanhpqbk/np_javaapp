@@ -155,7 +155,7 @@ public class Upload extends javax.swing.JFrame {
     private void uploadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadBtnActionPerformed
 
         Client client = Main.getClient();
-        client.send(HomePage.COMPRESS);
+        client.send(Main.COMPRESS);
         client.send(file);
             
         System.out.println("Client has sent file to server");

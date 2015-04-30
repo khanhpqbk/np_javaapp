@@ -9,6 +9,7 @@ import java.io.File;
 import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import main.Main;
 import model.Client;
 
 /**
@@ -18,9 +19,7 @@ import model.Client;
 public class HomePage extends javax.swing.JFrame {
 
     static Client client = null;
-    public static int LOG_IN = 1;
-    public static int SIGN_UP = 2;
-    public static int COMPRESS = 3;
+    
     
     static boolean receivedFile = false;
     
@@ -69,6 +68,12 @@ public class HomePage extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel3.setText("Password");
+
+        passwordField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passwordFieldActionPerformed(evt);
+            }
+        });
 
         usernameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -195,12 +200,16 @@ public class HomePage extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
 
-        main.Main.getClient().send(LOG_IN);
-        String[] s = { usernameField.getText(), passwordField.getPassword().toString()  };
-        System.out.println("user " + s[0] + " " + "pass: " + s[1]);
+        main.Main.getClient().send(Main.LOG_IN);
+        String[] s = { usernameField.getText(), new String(passwordField.getPassword())  };
+//        System.out.println("user " + s[0] + " " + "pass: " + s[1]);
         main.Main.getClient().send(s);
         
     }//GEN-LAST:event_loginBtnActionPerformed
+
+    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_passwordFieldActionPerformed
  
     public static JLabel getInfoLabel() {
         return infoLabel;

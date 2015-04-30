@@ -20,6 +20,10 @@ public class Main {
     static Client client;
     static File fcom;
     
+    public static int LOG_IN = 1;
+    public static int SIGN_UP = 2;
+    public static int COMPRESS = 3;
+    
     public static void main(String[] args) {
 //        new HomePage().show();
         /* Set the Nimbus look and feel */
@@ -52,7 +56,7 @@ public class Main {
             }
         });
         
-        client = new Client(4000);
+        client = new Client(3000);
         
         client.setOnReceiveListener(new Client.OnReceiveListener() {
 

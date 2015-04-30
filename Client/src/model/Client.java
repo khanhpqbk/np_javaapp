@@ -16,6 +16,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ui.Signup;
 
 /**
  *
@@ -92,12 +93,19 @@ public class Client {
                 try {
                     int i = dis.readInt();
                     switch(i) {
-                        case 1: // boolean
+                        case 1: // AUTHENTICATE ON LOGIN
                             boolean b = dis.readBoolean();
                             if (listener != null)
-                                listener.onReceive(0, b);
+                                listener.onReceive(i, b);
                             break;
-                        case 3: // file
+                        case 2: // SIGNUP: ERROR
+                            boolean b2 = dis.readBoolean();
+                            if (!b2)
+                                Signup.getInfoSignupLabel().setText("User already exists! ");
+                            else 
+                                Signup.getInfoSignupLabel().setText("Signup completed!");
+                            break;
+                        case 3: // COMPRESS - FILE COMPRESSED RECEIVED
                             ois = new ObjectInputStream(is);
                             Object o = ois.readObject();
                             
