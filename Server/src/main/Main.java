@@ -107,7 +107,7 @@ public class Main {
          
          File fcom = new File("C:\\output_tempcom.txt");
          
-         File temp = new File("C:\\output_temp.txt");
+//         File temp = new File("C:\\output_temp.txt");
         
         HashMap<Character, Integer> map = countSymbolsFile(f);
         ArrayList<Item> tab = new ArrayList<Item>();
@@ -128,17 +128,13 @@ public class Main {
         // build Item.code cho tung item dua vao freq
         Algorithm fano = new Algorithm(tab);
         
-        HashMap<Character, String> tabMap = new HashMap<>();
-        for (Item item: tab) {
-            tabMap.put(item.ch, item.code);
-        }
+       
+        String[] arr = new String[256];
+        for(Item item: tab) {
+            arr[(int)item.ch] = item.code;
+        } 
         
-        // bien doi cac ki tu abc thong thuong thanh chuoi string dang. "101110101010"
-        compressFile(f, temp, tabMap);     
-
-        
-        // bien doi sang dang nhi phan tuong ung va viet chuoi trong file nay vao file
-        writeFileCompressedFile(temp, fcom);     
+         compressFileAtOnce(f, fcom, arr);
 
         return fcom;
      }
@@ -169,9 +165,9 @@ public class Main {
                 map.put(st.nextToken(), st.nextToken());
             }
             
-            for(HashMap.Entry<String, String> it: map.entrySet()) {
-                System.out.println(it.getKey() + it.getValue());
-            }
+//            for(HashMap.Entry<String, String> it: map.entrySet()) {
+//                System.out.println(it.getKey() + it.getValue());
+//            }
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -213,86 +209,71 @@ public class Main {
         
         return j;
     }
-    
-     static void writeFileCompressedFile(File src, File des){
-        FileOutputStream fos = null;
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(src);
-            fos = new FileOutputStream(des);
-            int integer;
-            String sub = "";
-//            byte b;
-//            char c;
-            int len = 0;
-            int j = 0;
-            int i;
-            
-            while ( (i = fis.read()) != -1 ) {
-                sub += ((char)i);
-                if (sub.length() == 8) {
-                    integer = Helper.stringToByte(sub);
-                    fos.write(integer);
-                    sub = "";
-                }
-  
-            }
-            
-            // nen' not may bits con sot lai cua file
-            
-            len = sub.length();
-            while (sub.length() < 8) {
-                sub = sub.concat("0");
-            }
-            integer = Helper.stringToByte(sub);
-            fos.write(integer);
-            
-            
-            
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fos.close();
-                fis.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-   
-    /**
-     *
+     
+     /**
+     * compress and write to file immediately (1 step only instead of 2 steps before)
      * 
-     * @param src origin
-     * @param des destination 
-     * @param tabMap
-     *  HashMap represents the table
+     * @param File src
+     * @param File des
+     * @param tabArr
+     *  array represents the table
      * @return 
      *  compressed string
      */
-    static void compressFile(File src, File des, HashMap<Character, String> tabMap) {
+    static void compressFileAtOnce(File src, File des, String[] tabArr) {
         
         FileInputStream fis = null;
         FileOutputStream fos = null;
         int i;
         char[] arr;
+        String sub = "";
+        int j = 0;
+        String tempCode = "";
         
         try {
             fis = new FileInputStream(src);
             fos = new FileOutputStream(des);
             while( (i = fis.read()) != -1) {
-                String code = tabMap.get((char) i);
-                arr = code.toCharArray();
-                for(char c: arr)
-                    fos.write(c);
+                String code = tabArr[i];
+                tempCode = tempCode.concat(code);
+                
+//                System.out.println(tempCode);
+                
+                if(tempCode.length() >= 8) {
+                    sub = tempCode.substring(0, 8);
+                    
+//                    System.out.println(sub);
+                    
+                    tempCode = tempCode.substring(8, tempCode.length());
+                    
+                    j = Helper.stringToByte(sub);
+                    fos.write(j);
+                }
+                
             }
+            
+            // viet not cac bits con sot lai
+            int len = tempCode.length();
+//            int lenTemp = len;
+            while(tempCode.length() < 8) {
+                tempCode = tempCode.concat("0");
+                
+            }
+            j = Helper.stringToByte(tempCode);
+            System.out.println(tempCode);
+            fos.write(j);
+            
+            // mark byte
+            fos.write(len);
+            
+            
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+    
+    
 
    
    
