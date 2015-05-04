@@ -61,7 +61,7 @@ public class HomePage extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 51, 255))); // NOI18N
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\KHANH\\Desktop\\user.PNG")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ui/flyingtech_login.png"))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setText("Username");
@@ -200,10 +200,11 @@ public class HomePage extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
 
-        main.Main.getClient().send(Main.LOG_IN);
+        Client client = Client.getInstance();
+        client.send(Main.LOG_IN);
         String[] s = { usernameField.getText(), new String(passwordField.getPassword())  };
 //        System.out.println("user " + s[0] + " " + "pass: " + s[1]);
-        main.Main.getClient().send(s);
+        client.send(s);
         
     }//GEN-LAST:event_loginBtnActionPerformed
 

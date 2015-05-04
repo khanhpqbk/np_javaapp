@@ -44,10 +44,11 @@ public class Main {
     static HashMap<String, String> listUserPass = new HashMap<>();
    
      public static void main(String[] args) {
+
          
         readFileUserpass(listUserPass);
          
-        Server s = new Server(3000);
+        Server s = Server.getInstance();
         
         
         

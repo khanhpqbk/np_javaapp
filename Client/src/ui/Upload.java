@@ -44,7 +44,7 @@ public class Upload extends javax.swing.JFrame {
         fileChosenBtn = new javax.swing.JButton();
         infoFileChosen = new javax.swing.JLabel();
         uploadBtn = new javax.swing.JButton();
-        downloadLabel = new javax.swing.JLabel();
+        infoProcessLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -67,11 +67,11 @@ public class Upload extends javax.swing.JFrame {
             }
         });
 
-        downloadLabel.setForeground(new java.awt.Color(0, 51, 255));
-        downloadLabel.setText("Download not available yet.");
-        downloadLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        infoProcessLabel.setForeground(new java.awt.Color(0, 51, 255));
+        infoProcessLabel.setText("Download not available yet.");
+        infoProcessLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                downloadLabelMouseClicked(evt);
+                infoProcessLabelMouseClicked(evt);
             }
         });
 
@@ -91,7 +91,7 @@ public class Upload extends javax.swing.JFrame {
                         .addComponent(uploadBtn))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(120, 120, 120)
-                        .addComponent(downloadLabel)))
+                        .addComponent(infoProcessLabel)))
                 .addContainerGap(121, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -104,7 +104,7 @@ public class Upload extends javax.swing.JFrame {
                 .addGap(45, 45, 45)
                 .addComponent(uploadBtn)
                 .addGap(33, 33, 33)
-                .addComponent(downloadLabel)
+                .addComponent(infoProcessLabel)
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
@@ -154,14 +154,16 @@ public class Upload extends javax.swing.JFrame {
 
     private void uploadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadBtnActionPerformed
 
-        Client client = Main.getClient();
+        Client client = Client.getInstance();
         client.send(Main.COMPRESS);
         client.send(file);
             
         System.out.println("Client has sent file to server");
+        
+        infoProcessLabel.setText("processing...");
     }//GEN-LAST:event_uploadBtnActionPerformed
 
-    private void downloadLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadLabelMouseClicked
+    private void infoProcessLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoProcessLabelMouseClicked
 //         TODO: unimplemented
 //        System.out.println("mouse clicked");
         JFileChooser fc = new JFileChooser();
@@ -189,13 +191,13 @@ public class Upload extends javax.swing.JFrame {
                 Logger.getLogger(Upload.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            downloadLabel.setText("Download not available yet.");
+            infoProcessLabel.setText("Download not available yet.");
             
         }
-    }//GEN-LAST:event_downloadLabelMouseClicked
+    }//GEN-LAST:event_infoProcessLabelMouseClicked
 
     public static JLabel getDownloadLabel() {
-        return downloadLabel;
+        return infoProcessLabel;
     }
     
     public int getSize(File f) {
@@ -243,9 +245,9 @@ public class Upload extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private static javax.swing.JLabel downloadLabel;
     private javax.swing.JButton fileChosenBtn;
     private javax.swing.JLabel infoFileChosen;
+    private static javax.swing.JLabel infoProcessLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton uploadBtn;

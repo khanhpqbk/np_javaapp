@@ -29,11 +29,17 @@ public class Server {
     OutputStream os = null;
     InputStream is = null;
     
+    private static Server server = null;
     
+    public static Server getInstance() {
+        if (server == null)
+            server = new Server(port);
+        return server;
+    }
     
     OnReceiveListener listener = null;
     
-    public Server(int port)
+    private Server(int port)
     {
         try {
             ServerSocket serverSocket = new ServerSocket(port);

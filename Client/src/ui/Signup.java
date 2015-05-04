@@ -202,7 +202,7 @@ public class Signup extends javax.swing.JFrame {
             return;
         } else // ok
         {
-            Client client = main.Main.getClient();
+            Client client = Client.getInstance();
             client.send(Main.SIGN_UP);
             String[] s = {user, pass};
             client.send(s);

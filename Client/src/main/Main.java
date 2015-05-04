@@ -52,11 +52,13 @@ public class Main {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new HomePage().setVisible(true);
+                HomePage hp = new HomePage();
+                hp.setVisible(true);
+                
             }
         });
         
-        client = new Client(3000);
+        client = Client.getInstance();
         
         client.setOnReceiveListener(new Client.OnReceiveListener() {
 
@@ -73,7 +75,7 @@ public class Main {
                         upload.setVisible(true);
                     }
                     else {
-                        HomePage.getInfoLabel().setText("Login failure!");
+                        HomePage.getInfoLabel().setText("Invalid username/password combination!");
                     }
                 } else if (o instanceof File) {
                     System.out.println("file received by client");
@@ -94,6 +96,8 @@ public class Main {
                 client.read();
             }
         }).start();
+        
+//        client.close();
     }
     
     public static Client getClient() {

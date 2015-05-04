@@ -23,8 +23,9 @@ import ui.Signup;
  * @author KHANH
  */
 public class Client {
+    
     String ip = "192.168.2.111";
-    int port = 3000;
+    static int port = 3000;
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
     
@@ -33,7 +34,13 @@ public class Client {
     
     OnReceiveListener listener = null;
     
-    public Client(int port) {
+    private static Client client = new Client(port);
+    
+    public static Client getInstance() {
+        return client;
+    }
+    
+    private Client(int port) {
         try {
             clientSocket = new Socket(ip, port);
             
@@ -122,13 +129,14 @@ public class Client {
             }                
     }
         
-//        finally {
-//            try {
-//                ois.close();
-//            } catch (IOException ex) {
-//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+    public void close() {
+        try {
+            clientSocket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
             
     public interface OnReceiveListener {
