@@ -100,9 +100,6 @@ public class Main {
 //        client.close();
     }
     
-    public static Client getClient() {
-        return client;
-    }
     
     public static File getFileCompressed() {
         return fcom;
