@@ -7,6 +7,7 @@ package model;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -16,7 +17,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import ui.HomePage;
 import ui.Signup;
+import ui.Upload;
 
 /**
  *
@@ -24,7 +28,7 @@ import ui.Signup;
  */
 public class Client {
     
-    String ip = "192.168.2.111";
+    String ip = "0.0.0.0";
     static int port = 3000;
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
@@ -35,6 +39,8 @@ public class Client {
     OnReceiveListener listener = null;
     
     private static Client client = new Client(port);
+    
+    private static byte[] arr;
     
     public static Client getInstance() {
         return client;
@@ -80,11 +86,10 @@ public class Client {
         }
     }
     
-    public void send(Object o) {
+    public void send(byte[] arr) {
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(o);
-//            oos.close();
+//            System.out.println(arr[0] + " " + arr[1]);
+            os.write(arr);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -92,8 +97,6 @@ public class Client {
     }
     
     public void read() {
-        ObjectInputStream ois = null;
-        
             DataInputStream dis = new DataInputStream(is);
             
             while(true) {
@@ -102,8 +105,16 @@ public class Client {
                     switch(i) {
                         case 1: // AUTHENTICATE ON LOGIN
                             boolean b = dis.readBoolean();
-                            if (listener != null)
-                                listener.onReceive(i, b);
+                            if ( b ) {
+                                HomePage.getInfoLabel().setText("Login success!");
+                                HomePage.getFrames()[0].setVisible(false);
+                                Upload upload = new Upload();
+                                upload.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                                upload.setVisible(true);
+                            }
+                            else {
+                                HomePage.getInfoLabel().setText("Invalid username/password combination!");
+                            }
                             break;
                         case 2: // SIGNUP: ERROR
                             boolean b2 = dis.readBoolean();
@@ -113,21 +124,22 @@ public class Client {
                                 Signup.getInfoSignupLabel().setText("Signup completed!");
                             break;
                         case 3: // COMPRESS - FILE COMPRESSED RECEIVED
-                            ois = new ObjectInputStream(is);
-                            Object o = ois.readObject();
-                            
-//                            System.out.println("client receive file");
-                            if (listener != null)
-                                listener.onReceive(0, o);
-//                            ois.close();
+                            int len = dis.readInt();
+                            arr = new byte[len];
+                            is.read(arr);
+                            System.out.println("file received by client");
+                            Upload.getDownloadLabel().setText("Click to download!");
+
                             break;
                     }
-                    
-                } catch (IOException | ClassNotFoundException ex) {
+                } catch (IOException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }                
+                    
+                
+            }         
     }
+
         
     public void close() {
         try {
@@ -137,6 +149,9 @@ public class Client {
         }
     }
 
+    public static byte[] getByteArr() {
+        return arr;
+    }
     
             
     public interface OnReceiveListener {

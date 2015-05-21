@@ -70,6 +70,7 @@ public class Main {
                     Boolean b = (Boolean) o;
                     if ( b ) {
                         HomePage.getInfoLabel().setText("Login success!");
+                        HomePage.getFrames()[0].setVisible(false);
                         Upload upload = new Upload();
                         upload.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
                         upload.setVisible(true);

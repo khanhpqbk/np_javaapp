@@ -156,7 +156,9 @@ public class Upload extends javax.swing.JFrame {
 
         Client client = Client.getInstance();
         client.send(Main.COMPRESS);
-        client.send(file);
+        
+        client.send(getSize(file));
+        client.send(getBytes(file));
             
         System.out.println("Client has sent file to server");
         
@@ -175,14 +177,15 @@ public class Upload extends javax.swing.JFrame {
             
             File fsave = fc.getSelectedFile();
 
-            File fcom = Main.getFileCompressed();
+            byte[] fcom = Client.getByteArr();
 //            System.out.println(getSize(fcom));
-
+//            byte[] arr = trimArr(fcom);
+            
             try {
                 //            System.out.println(f.getName());
 //            File fsave = new File(f.getAbsolutePath());
                 FileOutputStream fos = new FileOutputStream(fsave);
-                fos.write(getBytes(Main.getFileCompressed()));
+                fos.write(fcom);
                 fos.flush();
                 fos.close();
             } catch (FileNotFoundException ex) {
@@ -241,7 +244,16 @@ public class Upload extends javax.swing.JFrame {
         return arr;
     }
     
-    
+    public byte[] trimArr(byte[] arr) {
+        int i;
+        for( i = 0; i < arr.length; i++)
+            if(arr[i] == 0) break;
+        byte[] retArr = new byte[i];
+        for(int j = 0; j < i; j++) 
+            retArr[j] = arr[j];
+        
+        return retArr;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

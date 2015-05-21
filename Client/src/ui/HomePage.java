@@ -216,6 +216,10 @@ public class HomePage extends javax.swing.JFrame {
         return infoLabel;
     }
     
+    public HomePage getHomePageInstance() {
+        return this;
+    }
+    
 //    public static File getFile() {
 ////        while(!receivedFile);
 //        return fcom;
