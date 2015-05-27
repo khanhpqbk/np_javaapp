@@ -78,16 +78,16 @@ public class Helper {
         byte[] arrCom = null;
         
         
-        byte[] f = byteArr;
+//        byte[] f = byteArr;
          
 //         File temp = new File("C:\\output_temp.txt");
         
-        HashMap<Character, Integer> map = countSymbolsBytes(f);
+        HashMap<Character, Integer> map = countSymbolsBytes(byteArr);
         ArrayList<Item> tab = new ArrayList<Item>();
 
-        int len = f.length;
+        int len = byteArr.length;
         
-//         System.out.println(getSize(f));
+//         System.out.println(len);
         
         // xay dung Item.char, Item.freq cho tung item
         // chuyen HashMap thanh arrayList
@@ -102,7 +102,7 @@ public class Helper {
         Algorithm fano = new Algorithm(tab);
         
 //        for(Item it: tab) {
-//            System.out.println((int)it.ch + " " + it.code);
+//            System.out.println((int)it.ch + " " + it.freq);
 //        }
         
         String[] arr = new String[256];
@@ -112,7 +112,7 @@ public class Helper {
         
         
         
-        arrCom = compressBytesAtOnce(f, arr);
+        arrCom = compressBytesAtOnce(byteArr, arr);
 
         return arrCom;
      }
@@ -231,7 +231,7 @@ public class Helper {
                 
             }
             j = Helper.stringToByte(tempCode);
-            System.out.println(tempCode);
+//            System.out.println(tempCode);
             fos.write(j);
             
             // mark byte
@@ -301,7 +301,7 @@ public class Helper {
                 
             }
             j = Helper.stringToByte(tempCode);
-            System.out.println(tempCode);
+//            System.out.priclient.read();ntln(tempCode);
 //            fos.write(j);
             listByte.add((byte)(j));
             // mark byte
@@ -351,8 +351,11 @@ public class Helper {
             
         for ( i = 0; i < f.length; i++ ) {
             int k = f[i];
-            if(k < 0 )
+            if(k < 0 ) {
+//                if(k == -256)
+//                    System.out.println(k);
                 k += 256;
+            }
             if (!map.containsKey( (char)k) )
                 map.put( ((char)k), 1);
             else {

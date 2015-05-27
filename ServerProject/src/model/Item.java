@@ -7,7 +7,7 @@ package model;
 
 
 /**
- * Created by F0RIS on 11.03.2015.
+ * 
  */
 // 
 public  class Item implements Comparable{

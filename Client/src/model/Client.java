@@ -28,7 +28,8 @@ import ui.Upload;
  */
 public class Client {
     
-    String ip = "0.0.0.0";
+//    String ip = "192.168.2.101";
+    static String ip = "127.0.0.1";
     static int port = 3000;
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
@@ -38,15 +39,21 @@ public class Client {
     
     OnReceiveListener listener = null;
     
-    private static Client client = new Client(port);
+    private static Client client;
     
     private static byte[] arr;
     
     public static Client getInstance() {
+        if(client == null)
+            client = new Client(ip, port);
         return client;
     }
     
-    private Client(int port) {
+    public static void setIp(String ip) {
+        Client.ip = ip;
+    }
+    
+    private Client(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
             
@@ -87,9 +94,16 @@ public class Client {
     }
     
     public void send(byte[] arr) {
+        final int MAX_VAL = 65536;
+        int j = 0;
         try {
 //            System.out.println(arr[0] + " " + arr[1]);
-            os.write(arr);
+            while(j < arr.length / MAX_VAL) {
+                os.write(arr, j*MAX_VAL, MAX_VAL);
+                j++;
+            }
+            os.write(arr, j*MAX_VAL, arr.length - j * MAX_VAL);
+//            dos.write(arr);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -99,7 +113,7 @@ public class Client {
     public void read() {
             DataInputStream dis = new DataInputStream(is);
             
-            while(true) {
+            while( !clientSocket.isClosed() ) {
                 try {
                     int i = dis.readInt();
                     switch(i) {
@@ -107,9 +121,9 @@ public class Client {
                             boolean b = dis.readBoolean();
                             if ( b ) {
                                 HomePage.getInfoLabel().setText("Login success!");
-                                HomePage.getFrames()[0].setVisible(false);
+                                HomePage.getFrames()[1].setVisible(false);
                                 Upload upload = new Upload();
-                                upload.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                                upload.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                                 upload.setVisible(true);
                             }
                             else {
@@ -126,7 +140,7 @@ public class Client {
                         case 3: // COMPRESS - FILE COMPRESSED RECEIVED
                             int len = dis.readInt();
                             arr = new byte[len];
-                            is.read(arr);
+                            read(arr);
                             System.out.println("file received by client");
                             Upload.getDownloadLabel().setText("Click to download!");
 
@@ -138,6 +152,24 @@ public class Client {
                     
                 
             }         
+    }
+    
+    public void read(byte arr[]) {
+        final int MAX_VAL = 65536;
+        
+        byte[] readArr = new byte[MAX_VAL];
+        int i;
+         try {
+             for( i = 0; i < arr.length / MAX_VAL; i++) {
+                 is.read(readArr, 0, MAX_VAL);
+                 System.arraycopy(readArr, 0, arr, i * MAX_VAL, MAX_VAL);
+             }
+             is.read(readArr, 0, arr.length - i * MAX_VAL);
+             System.arraycopy(readArr, 0, arr, i * MAX_VAL, arr.length - i * MAX_VAL);
+             
+         } catch (IOException ex) {
+             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+         }
     }
 
         

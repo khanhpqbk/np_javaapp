@@ -8,6 +8,8 @@ package model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -44,12 +46,15 @@ public class Server {
             ServerSocket serverSocket = new ServerSocket(port);
             
             System.out.println("Server is listening on port " + port + "...");
-            System.out.println("" + serverSocket.getInetAddress().getCanonicalHostName());
+            System.out.println("" + serverSocket.getInetAddress().getHostAddress());
+            
+            
+//            System.out.println(InetAddress.getLocalHost().getHostAddress());
             
             while (true) {
                 clientSocket = serverSocket.accept();
 
-                System.out.println("a client ip = " + clientSocket.getLocalAddress().toString() + " connected.");
+                System.out.println("a client ip = " + clientSocket.getRemoteSocketAddress().toString() + " connected.");
 
 
                 new ServerThread(clientSocket, listUserPass).start();

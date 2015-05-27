@@ -10,6 +10,7 @@ import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import main.Main;
+//import main.Main;
 import model.Client;
 
 /**

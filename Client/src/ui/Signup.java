@@ -206,6 +206,7 @@ public class Signup extends javax.swing.JFrame {
             client.send(Main.SIGN_UP);
             String[] s = {user, pass};
             client.send(s);
+//            setVisible(false);
         }
         
     }//GEN-LAST:event_signupBtnActionPerformed

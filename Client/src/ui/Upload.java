@@ -5,6 +5,8 @@
  */
 package ui;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +31,14 @@ public class Upload extends javax.swing.JFrame {
      */
     public Upload() {
         initComponents();
+        addWindowListener(new WindowAdapter() {
+    
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // close sockets, etc
+                Client.getInstance().close();
+            }
+        });
     }
 
     /**
@@ -154,15 +164,32 @@ public class Upload extends javax.swing.JFrame {
 
     private void uploadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadBtnActionPerformed
 
-        Client client = Client.getInstance();
+        final Client client = Client.getInstance();
         client.send(Main.COMPRESS);
         
-        client.send(getSize(file));
-        client.send(getBytes(file));
-            
+        int j = getSize(file);
+        
+        client.send(j);
+        
         System.out.println("Client has sent file to server");
         
         infoProcessLabel.setText("processing...");
+//        System.out.println(i);
+        final byte[] arr = getBytes(file);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                client.send(arr);
+            }
+        }).start();
+        
+//        byte[] arr = getBytes(file);
+//        for(int i = 0; i < arr.length; i++)
+//            if(arr[i] == 0)
+//                System.out.println("0");
+        
     }//GEN-LAST:event_uploadBtnActionPerformed
 
     private void infoProcessLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_infoProcessLabelMouseClicked
@@ -232,6 +259,8 @@ public class Upload extends javax.swing.JFrame {
             
             while ( (i = fis.read()) != -1 ) {
                 arr[j++] = (byte)i;
+//                if(arr[j-1] == 0)
+//                    System.out.println("0");
             }
             fis.close();
             
